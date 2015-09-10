@@ -1,0 +1,20 @@
+TRAINING STEPS:
+
+1. pick the network architecture
+   - input, output -> defined by the problem
+   - hidden layers; if h > 1, each hidden should have same # of nodes
+   - # hidden layer nodes ~ N * # input layer nodes (N = 2, 3, 4)
+
+2. training:
+  
+   1. initialize Theta
+   2. for each input sample (x_i, y_i):
+      a. forward propagation
+      b. compute J(Theta)
+      c. backprop - computer deltas
+      d. compute cumulative deltas
+   3. compute dJ/dTheta
+   4. (optional) gradient checking to compare dJ/dTheta to numerical estimate
+      once you're sure it's OK, disable gradient checking
+   5. use gradient descent or advanced optimization method
+      with backprop to try to minimize J(Theta) 
