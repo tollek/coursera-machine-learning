@@ -1,0 +1,25 @@
+lambda = 1, maxIter = 50
+cost = 4.636143e-01
+accuracy = 95.50
+
+
+lambda = 1, maxIter = 100
+cost = 3.693163e-01
+accuracy = 98.26
+
+
+lambda = 1, maxIter = 400
+cost = 3.208288e-01
+accuracy = 99.40
+
+
+lambda = 0.01, maxIter = 400
+cost = 1.442759e-02
+accuracy = 100.00
+
+
+lambda = 10, maxIter = 100
+cost = 1.018586e+00
+accuracy = 93.68 
+
+
