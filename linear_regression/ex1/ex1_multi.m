@@ -73,7 +73,7 @@ X = [ones(m, 1) X];
 %               Finally, you should complete the code at the end
 %               to predict the price of a 1650 sq-ft, 3 br house.
 %
-% Hint: By using the 'hold on' command, you can plot multiple
+% Hinx_sat: By using the 'hold on' command, you can plot multiple
 %       graphs on the same figure.
 %
 % Hint: At prediction, make sure you do the same feature normalization.
@@ -105,7 +105,9 @@ fprintf('\n');
 % Recall that the first column of X is all-ones. Thus, it does
 % not need to be normalized.
 price = 0; % You should change this
-
+x_sample = (([1650 3] - mu) ./ sigma);
+x_sample = x_sample = [1 x_sample];
+price = x_sample * theta;
 
 % ============================================================
 
@@ -114,6 +116,26 @@ fprintf(['Predicted price of a 1650 sq-ft, 3 br house ' ...
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
+
+%% ================ Part 2.5: Plot error for different learning rates ================
+show_iter = 50;
+theta = zeros(3, 1);
+[theta, J_1] = gradientDescentMulti(X, y, theta, 1, show_iter);
+plot(1:show_iter, J_1, 'b');
+xlabel('Number of iterations');
+ylabel('Cost J for different learning rates');
+hold on;
+theta = zeros(3, 1);
+[theta, J_2] = gradientDescentMulti(X, y, theta, 0.3, show_iter);
+plot(1:show_iter, J_2, 'r');
+theta = zeros(3, 1);
+[theta, J_3] = gradientDescentMulti(X, y, theta, 0.1, show_iter);
+plot(1:show_iter, J_3, 'k');
+theta = zeros(3, 1);
+[theta, J_4] = gradientDescentMulti(X, y, theta, 0.03, show_iter);
+plot(1:show_iter, J_4, 'g');
+
+
 
 %% ================ Part 3: Normal Equations ================
 
@@ -149,11 +171,11 @@ fprintf('\n');
 
 % Estimate the price of a 1650 sq-ft, 3 br house
 % ====================== YOUR CODE HERE ======================
-price = dot(theta, [1 1650 3]); % You should change this
-
+x_sample = [1 1650 3];
+price2 = x_sample * theta; % You should change this
 
 % ============================================================
 
 fprintf(['Predicted price of a 1650 sq-ft, 3 br house ' ...
-         '(using normal equations):\n $%f\n'], price);
-
+         '(using normal equations):\n $%f\n'], price2);
+fprintf(['Price prediction ratio (gradient / normal equation):\n %f\n'], price / price2);

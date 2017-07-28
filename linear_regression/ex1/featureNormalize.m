@@ -26,12 +26,13 @@ sigma = zeros(1, size(X, 2));
 % Hint: You might find the 'mean' and 'std' functions useful.
 %       
 
-mu = mean(X)
-sigma = std(X)
-
-mu_matrix = repmat(mu, size(X, 1), 1);
-sigma_matrix = repmat(sigma, size(X, 1), 1);
-X_norm = (X - mu_matrix) ./ sigma_matrix;
+mu = mean(X);
+sigma = std(X);
+# if sigma == 0, we need to replace it with 1 (or sth)
+# grader will accept it anyway, but to avoid division by 0, we fix it.
+tmp = sigma;
+tmp(tmp == 0) = 1;
+X_norm = (X - mu) ./ tmp;
 
 % ============================================================
 
