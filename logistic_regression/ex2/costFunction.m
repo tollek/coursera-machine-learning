@@ -21,10 +21,13 @@ grad = zeros(size(theta));
 %
 
 h = sigmoid(X * theta);
-J = 1 / m * sum(-y .* log(h) - (1 - y) .* log(1-h));
-for j = 1:length(theta)
-    temp = 1 / m * sum((h - y) .* X(:, j));
-    grad(j, 1) = temp;
+J = (1/m) * sum(-y .* log(h) - (1-y) .* log(1-h));
+
+% X .* (h-y): (i,h)        i-th sample contribution for j-th parameter gradient
+%                          this is a m x n (samples x parametrs) matrix_type
+% sum(X .* (h-y): (i,h))   gives a row vector; we want it to have same dimensions
+%                          as theta, so transpose
+grad = (1/m) * sum(X .* (h - y))';
 
 % =============================================================
 
