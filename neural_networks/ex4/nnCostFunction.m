@@ -62,6 +62,7 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+
 % Forward propagation
 a1 = [ones(size(X, 1), 1), X];
 z2 = a1 * Theta1';
@@ -70,65 +71,62 @@ a2 = [ones(size(a2, 1), 1), a2];
 z3 = a2 * Theta2';
 a3 = sigmoid(z3);
 
+% Calculate cost function without the regularization
+y_onehot = zeros(size(a3));
+for i=1:m
+  y_onehot(i, y(i)) = 1;
+ end
+J = (1/m) * sum(sum((-y_onehot .* log(a3) - (1-y_onehot) .* log(1-a3))));
+
 % cost function - iterative (over each sample) approach
-for i = 1:m
-	% apppends '1' as first column
-	y_delta = zeros(num_labels, 1);
-	y_delta(y(i)) = 1;
+%for i = 1:m
+%	% apppends '1' as first column
+%	y_delta = zeros(num_labels, 1);
+%	y_delta(y(i)) = 1;
 
-	a3_delta = a3(i, :)';
-	% j_delta is the sum_k [..] in the J(theta) formula
-	j_delta = -y_delta.*log(a3_delta) - (1-y_delta).*log(1-a3_delta);
-	J = J + sum(j_delta);
-end
+%	a3_delta = a3(i, :)';
+%	% j_delta is the sum_k [..] in the J(theta) formula
+%	j_delta = -y_delta.*log(a3_delta) - (1-y_delta).*log(1-a3_delta);
+%	J = J + sum(j_delta);
+%end
 
-% cost function - vectorized approach
-%	y_matrix = zeros(size(y,1), num_labels);
-%	for i = 1:m
-%		y_matrix(i, y(i)) = 1;
-%	end
-%	J = sum(sum(-y_matrix .* log(a3) - (1-y_matrix) .* log(1-a3)));
-	
-J = J / m;
-
-% add regularization
-reg = 0;
-reg = reg + sum(sum(Theta1(:, 2:end) .^ 2));
-reg = reg + sum(sum(Theta2(:, 2:end) .^ 2));
-reg = lambda / (2 * m) * reg;
-J = J + reg;
+% Cost function WITH regularization (bias excluded)
+theta1_no0 = Theta1(:, 2:end);
+theta2_no0 = Theta2(:, 2:end);
+J = J + lambda / (2*m) * (sum((theta1_no0 .^ 2)(:)) + sum((theta2_no0 .^ 2)(:)));
 
 
-% -------------------------------------------------------------
-% Compute gradients
-for i = 1:m
-	% step 1: calculate input layer's values
-	% DONE
-
-	% step 2: calculate d_k for k = 3 (output layer)
-	% d_k3 = a_k3 - y_k
-	% we set values of a_k3 for every value, except the y(i) - here "-1"
-	d_k3 = a3(i, :) - ([1:num_labels]==y(i));
-	d_k3 = d_k3';	% d_k3 is N x 1 vector
-
-	% step 3:
-	% d_2 = Theta2' * d_3 .* sigmoid(z_2)
-	% we remove Theta2_0 (bias element)
-	% we transpose z2(i, :) - we want column vector
-	% NOTE: this is equivalent to removing delta2_0
-	d_k2 = (Theta2(:,2:end)' * d_k3) .* sigmoidGradient(z2(i, :)');
-
-	% step 4:
-	% DELTA(l) = DELTA(l) + d_(l+1) * a_l'		
-	Theta2_grad = Theta2_grad + d_k3 * a2(i,:);
-	Theta1_grad = Theta1_grad + d_k2 * a1(i,:);
-
+% Calculate gradients
+for i=1:m
+    % step 1: calculate input layer's values
+	  % DONE
+    
+    % step 2: calculate delta3 for k = 3 (output layer)
+    % we set values of a_k3 for every value, except the y(i) - here "-1"
+    delta3 = a3(i, :) - ([1:num_labels]==y(i));
+	  delta3 = delta3';	% delta3 is N x 1 vector
+    
+    % step 3:
+    % delta2 = Theta2' * delta3 .* sigmoid(z_2)
+	  % we remove Theta2_0 (bias element)
+	  % we transpose z2(i, :) - we want column vector
+	  % NOTE: this is equivalent to removing delta2_0
+    delta2 = (Theta2(:,2:end)' * delta3) .* sigmoidGradient(z2(i,:)');
+    
+    % step 4:
+    % DELTA(l) = DELTA(l) + d_(l+1) * a_l'		
+    % NOTE: our a1,a2,z2 are transposed already, so no need to transpose again.
+    Theta2_grad = Theta2_grad + delta3 * a2(i,:);
+    Theta1_grad = Theta1_grad + delta2 * a1(i,:);
 end
 
 % Gradient for every Theta is 1/m * DELTA_ij
 % second component comes from regularization
 Theta2_grad = Theta2_grad / m + [zeros(size(Theta2,1),1), Theta2(:, 2:end)] * lambda / m;
 Theta1_grad = Theta1_grad / m + [zeros(size(Theta1,1),1), Theta1(:, 2:end)] * lambda / m;
+
+
+% -------------------------------------------------------------
 
 % =========================================================================
 
@@ -137,4 +135,3 @@ grad = [Theta1_grad(:) ; Theta2_grad(:)];
 
 
 end
-
