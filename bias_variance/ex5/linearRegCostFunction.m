@@ -18,21 +18,15 @@ grad = zeros(size(theta));
 %
 %               You should set J to the cost and grad to the gradient.
 %
+h = X * theta;
+theta_no0 = theta(2:end);
+J = 1 / (2*m) * sum((h - y).^2) + lambda/(2*m) * sum(theta_no0 .^2);
+% note - grad is a vector (size(grad) == size(theta))
+grad = (1/m) * sum(X .* (h - y))' + lambda/m * [0; theta_no0];
 
-H = X * theta;
-J = 1/(2*m) * sum((H - y).^2) + lambda/(2*m) * sum(theta(2:end).^2);
 
 % =========================================================================
-% gradient:
-% dJ/dTheta_j = 1/m * (sum_1_m (h(x_i)-y_i) * x_j_i) + lambda/m * theta_j^2
-ghelper = repmat(H-y, 1, size(X,2));
-non_reg_grad = 1/m * (ghelper .* X);
-non_reg_grad = sum(non_reg_grad);
-% add regularaziation for theta_j (j>0)
-% gradient == derivative of J(Theta), thus the regularization therm is Theta, not Theta^2
-grad = non_reg_grad + lambda/m*[0, theta(2:end)'];
 
 grad = grad(:);
 
 end
-
